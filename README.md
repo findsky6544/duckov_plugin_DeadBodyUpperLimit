@@ -1,0 +1,2 @@
+# duckov_plugin_DeadBodyUpperLimit
+逃离鸭科夫mod：修改遗留物上限
