@@ -20,14 +20,5 @@ namespace DeadBodyUpperLimit
             return false;
         }
     }
-
-    [HarmonyPatch(typeof(DeadBodyManager), "OnSubSceneLoaded")]
-    public class Patch_DeadBodyManager_OnSubSceneLoaded
-    {
-        static bool Prefix(DeadBodyManager __instance)
-        {
-            Console.WriteLine("Patch_DeadBodyManager_OnSubSceneLoaded");
-            return true;
-        }
-    }
 }
+
