@@ -11,6 +11,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Unity.VisualScripting;
 using static Duckov.DeadBodyManager;
 
 namespace DeadBodyUpperLimit
@@ -24,7 +25,7 @@ namespace DeadBodyUpperLimit
             static bool Prefix(Ruleset __instance, ref int __result)
             {
                 Console.WriteLine("Patch_Ruleset_SaveDeadbodyCount");
-                __result = ModBehaviour.SaveDeadbodyCount;
+                __result = ModBehaviour.config.DeadBodyUpperLimit;
                 return false;
             }
         }
@@ -38,6 +39,30 @@ namespace DeadBodyUpperLimit
                 Console.WriteLine("Patch_Ruleset_SpawnDeadBody");
                 __result = true;
                 return false;
+            }
+        }
+
+        //防止数量为0时报错
+        [HarmonyPatch(typeof(DeadBodyManager), "AppendDeathInfo")]
+        public class Patch_DeadBodyManager_AppendDeathInfo
+        {
+            static bool Prefix(DeadBodyManager __instance)
+            {
+                Console.WriteLine("Patch_DeadBodyManager_AppendDeathInfo");
+                if(ModBehaviour.config.DeadBodyUpperLimit == 0)
+                {
+                    var deaths = Traverse.Create(__instance).Field("deaths").GetValue<List<DeathInfo>>();
+                    while(deaths.Count > 0)
+                    {
+                        deaths.RemoveAt(0);
+                    }
+                    Traverse.Create(__instance).Method("Save").GetValue();
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
         }
 
